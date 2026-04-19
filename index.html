@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Waseem Sajjad</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #1e1e1e; font-family: 'Helvetica Neue', Arial, sans-serif; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+    img { display: block; }
+    button { font-family: inherit; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const CDN = "https://pro2-bar-s3-cdn-cf";
+    const UID = "cedb3a0d-9d24-4128-a008-fea25ef4c7d1";
+
+    const projects = [
+      { id: "wheelchair-lifter", title: "Wheelchair Lift Attachment", year: "2024", thumb: CDN+"6.myportfolio.com/"+UID+"/a0a50242-e5c1-4572-94fb-283f5f06dd26_carw_4x3x32.png?h=1ac0f07b5d4b5629a08ad7616e0a03c1", color: "#2a4858" },
+      { id: "kinetic-sculpture", title: "Kinetic Sculpture", year: "2023", thumb: CDN+"6.myportfolio.com/"+UID+"/aa8b1815-2942-426e-ae28-d787beb9e015_rwc_133x0x1541x1156x32.png?h=5439c474f985c861008056544a0f5b49", color: "#5c3d2e" },
+      { id: "art-drawing-collage", title: "Art: Drawing & Collage", year: "2023", thumb: CDN+"1.myportfolio.com/"+UID+"/2d0cdc05-b465-4e92-8544-84a500d4e581_rwc_0x0x4032x3024x32.jpeg?h=78f475ca29aa45be19679e77fb94a7df", color: "#6b5b73" },
+      { id: "limestone-jaw-crusher", title: "Limestone Jaw Crusher", year: "2023", thumb: CDN+"5.myportfolio.com/"+UID+"/6c98e8a9-7df0-4c33-a5a4-ffa008411eb1_carw_4x3x32.JPG?h=f20abf934afc528508e0737d81be756c", color: "#4a5d3a" },
+      { id: "direction-speaker", title: "Harmony: A Directional Speaker", year: "2022", thumb: CDN+".myportfolio.com/"+UID+"/883cc15c-5dd9-45f7-a82f-e7ac0fd9953d_rwc_1276x127x1559x1169x32.png?h=65f47cf8792a288ecd8579ee02a59723", color: "#3a4f6a" },
+      { id: "bluetooth-speaker", title: "Bluetooth Speaker", year: "2022", thumb: CDN+".myportfolio.com/"+UID+"/85bca6c7-0cd6-48a6-a0a6-f7a213187dad_rwc_0x514x3024x2265x32.jpg?h=24437de5492a4797bf002f2a9f7367de", color: "#6a4a3a" },
+      { id: "cubesat-prototype", title: "CubeSat Prototype", year: "2022", thumb: CDN+".myportfolio.com/"+UID+"/879e6e89-97ca-4cc0-829a-e9df17d1b7b7_carw_4x3x32.jpg?h=21e1654c841589b70d7e4302b5615c4d", color: "#2e3d5a" },
+      { id: "small-projects", title: "Small Projects", year: "2022", thumb: CDN+"6.myportfolio.com/"+UID+"/763aa8d2-3bcd-4dce-abcb-1ea6961decfb_carw_4x3x32.jpg?h=bf81044af142f40e2656f749d50fbf25", color: "#5a4a5e" },
+      { id: "ornithopter", title: "Ornithopter", year: "2022", thumb: CDN+"1.myportfolio.com/"+UID+"/99983541-765f-411e-b4c8-f2dd8fd0805f_rwc_0x392x3024x2265x32.jpg?h=d3d81aa465ec7d661530cf681e464315", color: "#3d5a4a" },
+      { id: "balsa-wood-bridge", title: "Balsa Wood Bridge", year: "2021", thumb: CDN+"3.myportfolio.com/"+UID+"/e188021f-3b30-4f27-ab98-da525a749f5f_carw_4x3x32.JPG?h=8740c3c9a635f4d64bf950fb8d2efca7", color: "#7a6a4a" },
+      { id: "wooden-pendulum-clock", title: "Wooden Pendulum Clock", year: "2020", thumb: CDN+".myportfolio.com/"+UID+"/17af8905-cc25-48ca-8132-49ad3d58085d_rwc_0x151x492x368x32.png?h=01700e3e4684b92809b6e22fd03ef452", color: "#5a3a2e" },
+      { id: "first-robotics", title: "FIRST Robotics Team 236", year: "2020", thumb: CDN+"6.myportfolio.com/"+UID+"/a1b5a243-df9c-4d5b-9081-bd1fe9e7f3db_rwc_0x0x781x585x32.png?h=4dd93f4ff37ef89f90208d19fca28c74", color: "#3a3a5a" },
+    ];
+
+    /* ── Placeholder image with hover caption ── */
+    function Ph({ caption, h, color }) {
+      const [hov, setHov] = useState(false);
+      return (
+        <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+          style={{ position: "relative", overflow: "hidden", background: color || "#2d2d2d", height: h || 300, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ color: "#555", fontSize: "32px" }}>&#128247;</div>
+          {caption && hov && (
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "rgba(0,0,0,.75)", padding: "6px 10px", fontSize: "11px", color: "#ccc", textAlign: "center", fontStyle: "italic" }}>{caption}</div>
+          )}
+        </div>
+      );
+    }
+
+    /* ── Placeholder video ── */
+    function PhVid({ caption, h }) {
+      const [hov, setHov] = useState(false);
+      return (
+        <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+          style={{ position: "relative", overflow: "hidden", background: "#1a1a1a", height: h || 300, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ width: 56, height: 56, borderRadius: "50%", border: "3px solid rgba(255,255,255,.7)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 0, height: 0, borderTop: "12px solid transparent", borderBottom: "12px solid transparent", borderLeft: "20px solid rgba(255,255,255,.7)", marginLeft: 4 }} />
+          </div>
+          {caption && hov && (
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "rgba(0,0,0,.75)", padding: "6px 10px", fontSize: "11px", color: "#ccc", textAlign: "center", fontStyle: "italic" }}>{caption}</div>
+          )}
+        </div>
+      );
+    }
+
+    function H3({ children }) {
+      return <h3 style={{ fontSize: "17px", fontWeight: 400, color: "#bbb", margin: "48px 0 12px", textAlign: "center" }}>{children}</h3>;
+    }
+
+    function P({ children }) {
+      return <p style={{ fontSize: "14px", lineHeight: 1.9, color: "#aaa", fontWeight: 300, margin: "0 0 20px", textAlign: "center", maxWidth: 800, marginLeft: "auto", marginRight: "auto" }}>{children}</p>;
+    }
+
+    /* ────────── PROJECT CONTENT ────────── */
+    const projectContent = {
+      "wheelchair-lifter": () => (<>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", margin: "32px 0" }}>
+          <Ph caption="Castor wheel prototype with wood cam profiles and 3D printed holder" h={400} color="#2a3540" />
+          <Ph caption="Early prototype of the rear lift – overview" h={400} color="#2a3035" />
+        </div>
+        <P>In this year-long project for my Senior Capstone Design class, I have been working in a team of 3 Mechanical Engineering Seniors to design and build a device to be retrofitted to manual wheelchairs. See below for an in-depth description of our problem statement.</P>
+        <P><em>Note: This project is still in progress and is set to be completed by May 2024. As a result, this page is in progress and design choices and results may not yet be explained in full.</em></P>
+        <H3>Problem Statement</H3>
+        <P>Current users of manual, self-propelled wheelchairs have difficulty observing and avoiding small debris and obstacles in their path and traversing taller steps or curbs. We will develop a device that can be retrofitted to a standard manual wheelchair to overcome obstacles ranging from small debris to a single step. Our device will improve safety and accessibility for self-propelled wheelchair users.</P>
+        <H3>Target Benchmarks</H3>
+        <div style={{ textAlign: "center", color: "#aaa", fontSize: "14px", lineHeight: 2.2, marginBottom: "20px" }}>
+          <div>Minor obstacles: 1/8th in - 2 in tall</div>
+          <div>Step Size: 4 in - 7 in</div>
+          <div>Obstacles: uneven sidewalks, twigs and small debris, indoor and outdoor applications.</div>
+          <div>Reliability: end of year prototype: 75-95%</div>
+          <div>Reliability: theoretical shipped product: 99.9%</div>
+          <div>Target cost: $400 (under 20% wheelchair cost)</div>
+        </div>
+        <P>Applicability of design solution was verified by Manual Wheelchair users at the Gaylord Hospital Sports Association</P>
+        <P>This project is split into two main assemblies. The first is the large step lift. This subassembly is responsible for getting a user over a curb or step that is between 4-7 inches in height. It is compromised of a linkage, a linear actuator, its attachment point to the chair, and its base on the ground. The current prototype is made of 80/20 in order to facilitate rapid testing and changing link lengths, and a smoother aluminum prototype is in progress.</P>
+        <P>The base will be replaced with a one way wheel that will allow the user to roll forward, but not slip backwards as they lift onto the step.</P>
+        <P>A large portion of the work thus far on this section of the project has been in the design and analysis of the linear linkage in order to maximize lift and minimize friction with the ground, while maintaining as simple as a design as possible. One of the critical design requirements was to ensure our attachment would be as light and small as possible, as manual wheelchair users are hyperaware of the extra weight they push and need to minimize unnecessary weight additions as much as possible.</P>
+        <H3>Large Step Lift</H3>
+        <P>REs: Griffin Gharrity and Rowan Palmer</P>
+        <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: "4px", margin: "16px 0" }}>
+          <PhVid caption="Video of Early stage prototype lifting chair up a step." h={380} />
+          <Ph caption="Preliminary Linkage design" h={380} color="#eee" />
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "3fr 1fr", gap: "4px", margin: "4px 0" }}>
+          <Ph caption="Kinematic Analysis of Linkage was performed using MATLAB" h={340} color="#f5f5f5" />
+          <Ph caption="Still of the early prototype of the rear lift" h={340} color="#2a3035" />
+        </div>
+        <H3>Castor Wheel Subsystem</H3>
+        <P>RE: Waseem Sajjad</P>
+        <P>The second main subsystem of this project has been the design and construction of the castor wheel subsystem, which will passively roll over small obstacles that would normally stop the momentum of the chair and cause daily annoyances for the user. We chose to focus on creating as simple of a solution as possible, which resulted in a cam mechanism that is mechanically triggered by the obstacle and continuously wound with a constant force coil spring and trigger mechanism.</P>
+        <P>The Cam profile was determined using the CAMs toolbox in SolidWorks, and the coordinates and forces at each point were plotted in MATLAB. As this profile has a peak diameter of 8 inches, compared to the castor wheel's diameter of 4 inches, it is able to roll over small obstacles smoothly. This can be justified by examining how the majority of hospital wheelchairs meant to be pushed have large castor wheels up to 8 inches in diameter. However, for the manual wheelchair user, maneuverability is a higher priority than the smoothness of experience, which is why manual wheelchairs have small castors of around 4 inches in diameter. Our solution seeks to give manual wheelchair users that smooth 8 inch diameter experience, but only when they need it.</P>
+        <P>In order to trigger the cam profile to drop down and roll through an obstacle, we have created a mechanical trigger system. When the front flap is pushed backwards, it will pull the (green) pawl forward, and release the constant force spring, which will pull the cam profile towards the ground. We are using springs with up to 20 usable rotations, so that a user may rewind the system at the end of the day and have the system function over any obstacle it encounters.</P>
+        <P>We will be implementing a user-friendly rewinding system for this spring within the next few weeks.</P>
+        <P>The next steps in this subsystem will be to manufacture the castor holder out of aluminum, and continue prototyping the mechanical trigger system until we are happy with the reliability of functionality.</P>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          <Ph caption="Castor Holder CAD - 3D printed prototype" h={350} color="#dde" />
+          <PhVid caption="Test of cam and trigger mechanism, showed good proof of concept" h={350} />
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px", margin: "4px 0" }}>
+          <Ph caption="Preliminary CAD design to test trigger mechanism." h={320} color="#dde" />
+          <Ph caption="Test of trigger mechanism with constant force spring, independent of chair." h={320} color="#2a3035" />
+          <Ph caption="Metal Castor holder that was originally on wheelchair." h={320} color="#222" />
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px", margin: "4px 0" }}>
+          <Ph caption="most recent full prototype, using wood cam profiles and 3D printed castor holder." h={320} color="#2a3540" />
+          <Ph caption="Metal Castor holder originally on wheelchair" h={320} color="#222" />
+          <Ph caption="Full prototype alternate view" h={320} color="#2a3540" />
+        </div>
+        <div style={{ maxWidth: "65%", margin: "20px auto" }}>
+          <PhVid caption="Video of Functioning Trigger Mechanism on Castor Holder printed component of assembly." h={360} />
+        </div>
+      </>),
+
+      "kinetic-sculpture": () => (<>
+        <P>This project was completed as a final project for the class MENG 400: Computer Aided Engineering. I chose to design and build a wooden kinetic sculpture inspired by those created by David Roy and others. In this process, I used SolidWorks Motion Studies as well as Static Analysis.</P>
+        <P>Note: This will be a gravity driven sculpture, and a string and weight will be attached to the drum shown on the righthand side of the sculpture.</P>
+        <Ph caption="Kinetic Sculpture – Full CAD Assembly" h={450} color="#3a3530" />
+        <H3>Explanation of Design & Analysis</H3>
+        <Ph caption="Design & Analysis Overview" h={400} color="#3a3530" />
+        <H3>Material Selection</H3>
+        <P>I chose Balsa or 6061-T6 (SS) for every part with the exception of the back plate and front support, which will be made from Mahogany in order to create a contrasting finish.</P>
+        <H3>Gear Train</H3>
+        <P>I began by using an online software to determine a cycloidal gear profile for a 2:1 ratio. I found that cycloidal gear profiles are best when using wood as they create less friction than a typical involute gear profile would.</P>
+        <Ph caption="Gear Train CAD" h={350} color="#dde" />
+        <H3>Support Plates</H3>
+        <P>I created the back plate to be 8 inches in diameter and designed the front support to be a 6 inch diameter circle with a hole to the main axis.</P>
+        <H3>Impulse Mechanism & Dummy Assembly</H3>
+        <P>The mechanism used in my sculpture was inspired by that which I found in a YouTube video. I assembled this impulse mechanism into an assembly with a dummy block.</P>
+        <Ph caption="Impulse Mechanism – Dummy Assembly" h={350} color="#3a3530" />
+        <H3>Creation of Front Sculpture Assembly</H3>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          <Ph caption="Front Sculpture – Sketch 1" h={300} color="#3a3530" />
+          <Ph caption="Front Sculpture – Sketch 2" h={300} color="#3a3530" />
+        </div>
+        <P>I was not happy with the design until I added a second middle wheel. The total mass of this refined front section was 0.07 pounds.</P>
+        <Ph caption="Front Sculpture Assembly – Refined Design" h={400} color="#3a3530" />
+        <H3>Creation of Complete Assembly</H3>
+        <P>I was able to get it to run at 300 frames per second and an input torque of 5inlb with precise contacts.</P>
+        <Ph caption="Complete Assembly – Motion Study" h={400} color="#3a3530" />
+        <H3>Static Analysis</H3>
+        <P>All the factors of safety were above 1,000, which leaves me very confident in the strength of this assembly.</P>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          <Ph caption="FOS – Main Axis" h={280} color="#dde" />
+          <Ph caption="FOS – Side Axis" h={280} color="#dde" />
+          <Ph caption="FOS – Stopper Pin" h={280} color="#dde" />
+        </div>
+        <H3>Evaluation of Analysis Results</H3>
+        <P>Due to the large factors of safety in my design, I have full faith that this assembly will be both structurally sound and that the impulse mechanism will run the way I wish it to.</P>
+      </>),
+
+      "art-drawing-collage": () => (<>
+        <P>A series of projects completed within the class ART 114: Basic Drawing.</P>
+        <P>While art may generally be thought to be wholly separate from engineering, I believe skill in rendering to be critical to success when it comes to clearly articulating concept ideas.</P>
+        <H3>Project 1: Still Life Number 1</H3>
+        <P>I chose items of a similar technical theme as I wanted to challenge myself with capturing the shiny metal of the screwdriver, the softness of the wood grain as well as the texture and folds of the dish towel within the same space.</P>
+        <Ph caption="Still Life Number 1. Colored Pencils on paper." h={500} color="#3a3535" />
+        <H3>Project 2: A Built Acadia</H3>
+        <P>I decided to integrate my engineering background and create a collage that represented the juxtaposition seen in several of my favorite architectural buildings, where the built environment is integrated into nature.</P>
+        <Ph caption="A Built Acadia. 12in diameter plywood base. Printed images of Acadia National Park." h={500} color="#3a3a35" />
+        <P>The combination of these manufactured items layered upon a collage of images of Acadia National Park allowed me to obtain a similar effect as to what one may feel when viewing Falling Water by Frank Lloyd Wright or Glass House by Philip Johnson.</P>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          {["Concept Design Sketch","Manufacturing process","Process of collaging Acadia photos","Layout test of Acadia Photos"].map(function(c,i){ return <Ph key={i} caption={c} h={220} color="#3a3a35" /> })}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "4px", margin: "4px 0" }}>
+          {["Mock Wooden Shingles","Aluminum piece layered over mock window","Complete collage, angled perspective","Architectural inspiration"].map(function(c,i){ return <Ph key={i} caption={c} h={220} color="#3a3a35" /> })}
+        </div>
+        <Ph caption="A Built Acadia – Full View" h={500} color="#3a3a35" />
+        <H3>Project 3: Imagined Taps</H3>
+        <P>I chose to focus on my passion for tap dance with this project, and also explore rendering in black and white.</P>
+        <Ph caption="Imagined Taps. Charcoal, Pastels, Graphite on Paper." h={500} color="#2a2a2a" />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          {["Close up of shoe render 1","Close up of shoe render 2","Close up of shoe render 3","Close up of shoe render 4"].map(function(c,i){ return <Ph key={i} caption={c} h={220} color="#2a2a2a" /> })}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "4px", margin: "4px 0" }}>
+          {["Close up of shoe render 5","Tap marks, accentuated with pastels","Tap marks detail","Tap marks detail"].map(function(c,i){ return <Ph key={i} caption={c} h={220} color="#2a2a2a" /> })}
+        </div>
+      </>),
+
+      "limestone-jaw-crusher": () => (<>
+        <P>A design analysis project for MENG 325: Machine Elements and Manufacturing.</P>
+        <P>This task was to design a limestone jaw crusher that met a specific size range. Students designed the entire system starting with selecting a motor, designing a gear train, designing a 6 bar mechanism and performing analysis in MATLAB to validate the design.</P>
+        <P>Technical Skills used: CAD in OnShape and MATLAB programming.</P>
+        <P>Calculations and analyses completed: System level force and power analysis, kinematic analysis for position and velocity of a 6 bar mechanism, force analysis on 6 bar mechanism, drive train calculations, gear load and stress analysis, drive train shaft stress analysis, and 6 bar mechanism failure analysis.</P>
+        <Ph caption="Complete CAD of jaw crusher. Includes motor, gear train, flywheel, and 6 bar linkage." h={450} color="#3a4035" />
+        <P><em>Note that this project was completed remotely during the COVID-19 Pandemic.</em></P>
+      </>),
+
+      "direction-speaker": () => (<>
+        <P>Harmony was created in the class ENAS 400, Making It: Product Design and Entrepreneurship.</P>
+        <P>By Waseem Sajjad, Jacob Payne, Vishal Patel, and Valerie Villanueva</P>
+        <P>Harmony is a device that combines directional audio with motion tracking for a personalized and private sound experience that follows you as you move in space.</P>
+        <P>Technical Skills: 3D modeling in SolidWorks, water jet cutting, laser cutting, metal bending, soldering, and 3D printing.</P>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          <Ph caption="Completed functional prototype." h={400} color="#2a3040" />
+          <Ph caption="The team with the completed prototype of Harmony" h={400} color="#2a3040" />
+        </div>
+        <H3>Final Design</H3>
+        <P>The final prototype consisted of a 3D printed cover with a pre-made 360 degree rotational base. This base spins by the power of a servo motor.</P>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          <Ph caption="Rendering of the final prototype." h={350} color="#dde" />
+          <Ph caption="Rendering to display motion of servo motors." h={350} color="#dde" />
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "4px", margin: "4px 0" }}>
+          {["Evolution from cardboard to final","Household use case","Advertising use case","Museum exhibit use case"].map(function(c,i){ return <Ph key={i} caption={c} h={240} color="#2a3040" /> })}
+        </div>
+        <H3>Progress Images</H3>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          {["Proof of concept prototype","Preliminary Design in CAD","Team meeting for design review","Electronics under base cover","Final prototype base in progress","Final assembly with servo","Final prototype in progress","Wiring through elbows","Team presenting final prototype"].map(function(c,i){ return <Ph key={i} caption={c} h={260} color="#2a3040" /> })}
+        </div>
+        <PhVid caption="Video montage of highlights in the construction and fabrication." h={400} />
+      </>),
+
+      "bluetooth-speaker": () => (<>
+        <Ph caption="Bluetooth Speaker – Completed" h={450} color="#3a3025" />
+        <P>This speaker was built in the class ENAS 400: Making It. Over the course of 4 weeks, each student designed and created their own unique bluetooth speaker.</P>
+        <H3>Designing the CAD</H3>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          <Ph caption="SolidWorks Assembly" h={350} color="#dde" />
+          <Ph caption="Exploded View" h={350} color="#dde" />
+        </div>
+        <H3>Building the Wooden Frame</H3>
+        <P>I began with a piece of walnut wood. Each side was run through a router and planar until the wooden plank was squared on all corners.</P>
+        <H3>Overall</H3>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          {["Walnut wood milled","ShopBot cutting MDF","WaterJet cutting Aluminum","Aluminum with MDF backing","Adding finish","Electronics Board soldered","Assembling Frame","Glued Frame","Speaker Front","Speaker Back"].map(function(c,i){ return <Ph key={i} caption={c} h={260} color="#3a3025" /> })}
+        </div>
+      </>),
+
+      "cubesat-prototype": () => (<>
+        <Ph caption="CubeSat Prototype" h={450} color="#2a2a3a" />
+        <P>A semester long class project for MENG 185: Mechanical Design. By Waseem Sajjad, Baltazar Lora, Ivan Lozano, and Isabel Sands.</P>
+        <P>We chose to build a CubeSat that would detect space debris between 0.1 and 1 cm wide.</P>
+        <P>Technical Skills: SolidWorks, C programming (Arduino), WaterJet and Laser Cutter.</P>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          {["Full CubeSat assembly","Exploded view","Frame subassembly","Wing subassembly","Linkage subassembly","Partial electronics subassembly"].map(function(c,i){ return <Ph key={i} caption={c} h={260} color="#2a2a3a" /> })}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px", margin: "4px 0" }}>
+          <Ph caption="Top view of CubeSat" h={300} color="#2a2a3a" />
+          <Ph caption="In progress Interior view" h={300} color="#2a2a3a" />
+        </div>
+      </>),
+
+      "small-projects": () => (<>
+        <H3>Collapsible Ticket Booth</H3>
+        <P>I designed the booth with simple wooden pegs and holes that allowed for fast and easy assembly. The booth breaks into 7 pieces.</P>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          <Ph caption="Ticket Booth – Assembled" h={350} color="#2a3030" />
+          <Ph caption="Ticket Booth – Detail" h={350} color="#2a3030" />
+        </div>
+        <H3>Desk Clock</H3>
+        <P>This clock was designed and built as an introduction to CNC milling.</P>
+        <Ph caption="Desk Clock" h={350} color="#3a3530" />
+        <H3>Metal Candlestick</H3>
+        <P>This metal candlestick was completed in the machine shop at NUST.</P>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          <Ph caption="Metal Candlestick – View 1" h={300} color="#2a2a2a" />
+          <Ph caption="Metal Candlestick – View 2" h={300} color="#2a2a2a" />
+        </div>
+        <H3>Woodworking – Small Box</H3>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          <Ph caption="Small Box – View 1" h={280} color="#3a3025" />
+          <Ph caption="Small Box – View 2" h={280} color="#3a3025" />
+          <Ph caption="Small Box – View 3" h={280} color="#3a3025" />
+        </div>
+        <H3>3D Printed Gear Phone Case</H3>
+        <Ph caption="3D Printed Gear Phone Case" h={350} color="#2a2a2a" />
+      </>),
+
+      "ornithopter": () => (<>
+        <P>An extracurricular project in the NUST Undergraduate Aerospace Association to build and design an ornithopter – a plane with flapping wings.</P>
+        <P>Over the course of the 2021-2022 school year, I worked with a team of 7 people to design and build an ornithopter.</P>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          {["Prototype 1 of ornithopter","Close up of original gear train","Prototype 2 – refined gears","Wing flexibility in motion"].map(function(c,i){ return <Ph key={i} caption={c} h={300} color="#2a3530" /> })}
+        </div>
+        <PhVid caption="Wings flapping – real time and slow motion." h={380} />
+      </>),
+
+      "balsa-wood-bridge": () => (<>
+        <P>In MENG 280: Strength and Deformation of Materials, students completed a design project to design and build a balsa wood bridge.</P>
+        <P>We were restricted to using balsa wood with an 1/8 inch square cross section, a maximum weight of 20g and a width of 12 inches.</P>
+        <P>Our team correctly predicted that our bridge would break at 150N.</P>
+        <Ph caption="Applied stress of 150N to top corners – SolidWorks simulation" h={400} color="#dde" />
+        <PhVid caption="Instron tensile tester applying force to the top of bridge." h={380} />
+        <Ph caption="Corners where bridge broke highlighted with red circles, matching simulation regions." h={400} color="#3a3a30" />
+      </>),
+
+      "wooden-pendulum-clock": () => (<>
+        <P>My Senior year of high school, I did an independent study with the engineering and wood shop teacher. I was inspired by the clocks that Clayton Boyer designed and built and knew I wanted to design my own wooden pendulum clock.</P>
+        <Ph caption="Wooden Pendulum Clock – Completed" h={500} color="#3a3025" />
+        <P>The first and most critical component was designing the gear train. The frame I designed to house the gears is inspired from my love of Irish dance and Celtic tradition.</P>
+        <P>This project was one of the most challenging I have undertaken. Completing it and seeing the clock ticking truly finalized my decision to go into engineering.</P>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          {["Cutting MDF gears on ShopBot","Verifying gear train with MDF","Cutting Maple gears","Smaller Gears","MDF vs wood gears","Pile of wooden gears","Gears formatted for clock","Cutting frame on ShopBot","Assembling bottom frame and gears","Middle frame placed","Piece of frame","Top view of frames with gears","Fully assembled frame","Side view depth","String for weight","Aluminum clock hands","Top of pendulum","Bottom of pendulum","Majority assembled","Completed clock on wall","Side view with dowels"].map(function(c,i){ return <Ph key={i} caption={c} h={240} color="#3a3025" /> })}
+        </div>
+      </>),
+
+      "first-robotics": () => (<>
+        <P>I was a member of my high school's FIRST Robotics team for all 4 years. My junior and senior year, I was the leader of the intake sub-team and my senior year I was the leader of the CAD team.</P>
+        <P>I also became comfortable using the Tormach CNC milling machines for cutting aluminum parts, and the plasma cutter for thin sheet metal pieces.</P>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px", margin: "16px 0" }}>
+          {["Presenting CAD model to the team for the 2019 season","The completed CAD for the 2019 intake","Working with mentor Vince Wilczynski","Intake without shooter arm","The completed robot in the 2020 season","A wooden prototype of intake for 2019 season"].map(function(c,i){ return <Ph key={i} caption={c} h={280} color="#2a2a3a" /> })}
+        </div>
+      </>),
+    };
+
+    /* ────────────── MAIN APP ────────────── */
+    function Portfolio() {
+      const [page, setPage] = useState("home");
+      const [scrollY, setScrollY] = useState(0);
+      const [hov, setHov] = useState(null);
+      const [loaded, setLoaded] = useState(false);
+      const [imgErr, setImgErr] = useState({});
+      const ref = useRef(null);
+
+      useEffect(function(){ setTimeout(function(){ setLoaded(true); }, 80); }, []);
+      useEffect(function(){ if(ref.current) ref.current.scrollTo(0, 0); }, [page]);
+
+      var nav = [
+        { id: "about", label: "About Me" },
+        { id: "home", label: "Projects" },
+        { id: "resume", label: "Resume" },
+        { id: "contact", label: "Contact" },
+      ];
+      var proj = projects.find(function(p){ return p.id === page; });
+
+      return (
+        <div style={{ fontFamily: "'Helvetica Neue',Arial,sans-serif", height: "100vh", width: "100%", display: "flex", flexDirection: "column", background: "#1e1e1e", color: "#fff", overflow: "hidden" }}>
+
+          <nav style={{ position: "sticky", top: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 28px", background: "#1a1a1a", borderBottom: "1px solid #333" }}>
+            <div style={{ display: "flex", gap: "24px" }}>
+              {nav.map(function(n){
+                return <button key={n.id} onClick={function(){ setPage(n.id); }} style={{ background: "none", border: "none", fontSize: "13px", fontWeight: 400, color: page === n.id ? "#fff" : "#777", cursor: "pointer", padding: 0, transition: "color .2s" }}>{n.label}</button>
+              })}
+            </div>
+            <div onClick={function(){ setPage("home"); }} style={{ fontSize: "18px", fontWeight: 700, cursor: "pointer" }}>Waseem Sajjad</div>
+          </nav>
+
+          <div ref={ref} onScroll={function(e){ setScrollY(e.target.scrollTop); }} style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
+
+            {page === "home" && (
+              <div style={{ opacity: loaded ? 1 : 0, transition: "opacity .5s" }}>
+                <div style={{ textAlign: "center", padding: "52px 20px 12px" }}>
+                  <h1 style={{ fontSize: "clamp(28px,5vw,48px)", fontWeight: 300, margin: "0 0 8px" }}>Waseem Sajjad</h1>
+                  <p style={{ fontSize: "13px", color: "#777", margin: 0 }}>Scroll to see my work!</p>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: "12px", padding: "28px 28px 64px", maxWidth: "1060px", margin: "0 auto" }}>
+                  {projects.map(function(p, i){
+                    return (
+                      <div key={i} onClick={function(){ setPage(p.id); }} onMouseEnter={function(){ setHov(i); }} onMouseLeave={function(){ setHov(null); }} style={{ position: "relative", aspectRatio: "4/3", overflow: "hidden", cursor: "pointer", background: p.color, transition: "transform .35s", transform: hov === i ? "translateY(-2px)" : "none" }}>
+                        {!imgErr[i] && <img src={p.thumb} alt={p.title} onError={function(){ setImgErr(function(x){ var n=Object.assign({},x); n[i]=true; return n; }); }} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transition: "transform .5s", transform: hov === i ? "scale(1.03)" : "scale(1)" }} />}
+                        <div style={{ position: "absolute", inset: 0, background: hov === i ? "linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 50%)" : "linear-gradient(to top,rgba(0,0,0,.45) 0%,transparent 38%)", transition: "all .35s" }} />
+                        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "14px", color: "#fff" }}>
+                          <div style={{ fontSize: "14px", fontWeight: 500, marginBottom: "2px" }}>{p.title}</div>
+                          <div style={{ fontSize: "11px", opacity: .6 }}>{p.year}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                {scrollY > 250 && <button onClick={function(){ ref.current.scrollTo({top:0,behavior:"smooth"}); }} style={{ position:"fixed",bottom:"16px",right:"16px",width:"32px",height:"32px",borderRadius:"50%",background:"#fff",color:"#000",border:"none",cursor:"pointer",fontSize:"14px",display:"flex",alignItems:"center",justifyContent:"center",zIndex:50 }}>&#8593;</button>}
+              </div>
+            )}
+
+            {page === "about" && (
+              <div style={{ maxWidth: "580px", margin: "0 auto", padding: "52px 28px 64px", textAlign: "center" }}>
+                <Ph caption="Profile photo" h={300} color="#2a3035" />
+                <P>I am an ABET Mechanical Engineering Major at NUST, currently in my Senior year of study. My interests lie predominantly in engineering product design and innovation. I am passionate about using engineering and technology to improve the way people experience life, whether that is in consumer products, medical devices, or any other innovative field.</P>
+                <P>I have experience in NX, SolidWorks, Inventor, MatLab, and other 3D modeling and analytical programs. I love jumping into projects that excite me and I am a motivated and determined person when it comes to overcoming challenges and thinking creatively.</P>
+                <P>Outside of engineering, I love to paint, play volleyball, and explore the outdoors.</P>
+                <div style={{ marginTop: "36px", paddingTop: "24px", borderTop: "1px solid #333" }}>
+                  <p style={{ fontSize: "14px", color: "#aaa", margin: "6px 0" }}>Contact me!</p>
+                  <p style={{ fontSize: "14px", color: "#aaa", margin: "4px 0" }}>Email: waseemsajjad@gmail.com</p>
+                  <p style={{ fontSize: "14px", color: "#aaa", margin: "4px 0" }}>Tel: 860-334-7316</p>
+                </div>
+              </div>
+            )}
+
+            {page === "resume" && (
+              <div style={{ maxWidth: "580px", margin: "0 auto", padding: "52px 28px 64px", textAlign: "center" }}>
+                <Ph caption="Resume" h={700} color="#333" />
+                <div style={{ marginTop: "20px" }}>
+                  <button onClick={function(){ setPage("home"); }} style={{ background: "none", border: "1px solid #444", borderRadius: "4px", padding: "8px 18px", cursor: "pointer", fontSize: "12px", color: "#aaa" }}>Home</button>
+                </div>
+              </div>
+            )}
+
+            {page === "contact" && (
+              <div style={{ maxWidth: "420px", margin: "0 auto", padding: "64px 28px", textAlign: "center" }}>
+                <h1 style={{ fontSize: "clamp(24px,4vw,42px)", fontWeight: 300, marginBottom: "32px" }}>Contact</h1>
+                <P>Email: waseemsajjad@gmail.com</P>
+                <P>Tel: 860-334-7316</P>
+              </div>
+            )}
+
+            {proj && (
+              <div style={{ maxWidth: "960px", margin: "0 auto", padding: "0 28px 64px" }}>
+                <h1 style={{ fontSize: "clamp(24px,4vw,42px)", fontWeight: 300, textAlign: "center", margin: "36px 0 8px" }}>{proj.title}</h1>
+                {projectContent[proj.id] ? projectContent[proj.id]() : null}
+                <div style={{ textAlign: "center", marginTop: "48px" }}>
+                  <button onClick={function(){ setPage("home"); }} style={{ background: "none", border: "1px solid #444", borderRadius: "4px", padding: "8px 18px", cursor: "pointer", fontSize: "12px", color: "#aaa" }}>&#8593;Back to Top</button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<Portfolio />);
+  </script>
+</body>
+</html>
